@@ -174,7 +174,7 @@ namespace SetUnitPriceByExcel
         public static decimal InvestigateStandardMarket { get; set; }   //표준시장단가 합계(조사내역)
         public static decimal FixedPricePercent { get; set; }           //고정금액 비중
         public static decimal ByProduct { get; set; }   //작업설
-        public static decimal ResultPrice { get; set; } //입찰 금액
+        public static decimal ResultPrice { get; set; } = 0; //입찰 금액
         public static decimal Rate { get; set; }        //네고율
 
         public static Dictionary<string, List<Data>> Dic = new Dictionary<string, List<Data>>();        //key : 세부공사별 번호 / value : 세부공사별 리스트

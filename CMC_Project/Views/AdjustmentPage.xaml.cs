@@ -459,7 +459,7 @@ namespace CMC_Project.Views
                 try
                 {
                     Data.priceA = (Decimal.Parse(priceA.Text));
-                    if (Data.priceA < 0)
+                    if (Data.priceA <= 0)
                         throw new Exception();
                 }
                 catch (Exception)
@@ -470,7 +470,7 @@ namespace CMC_Project.Views
                 try
                 {
                     Data.BasePrice = (Decimal.Parse(basePrice.Text));
-                    if (Data.BasePrice < 0)
+                    if (Data.BasePrice <= 0)
                         throw new Exception();
                 }
                 catch (Exception)
@@ -494,6 +494,13 @@ namespace CMC_Project.Views
                     Data.ResultPrice = (Decimal.Parse(resultPrice.Text));
                     if (Data.ResultPrice < 0)
                         throw new Exception();
+                    else if(Data.ResultPrice > 0)
+                    {
+                        if(Data.ResultPrice > 0.88m * (Data.BasePrice * 1.03m - Data.priceA) + Data.priceA || Data.ResultPrice < 0.88m * (Data.BasePrice * 0.97m - Data.priceA) + Data.priceA)  //직접 입력받은 입찰 금액이 예가 * 88%의 가능 범위(-3% ~ +3%)를 초과하면 에러
+                        {
+                            throw new Exception();
+                        }
+                    }
                 }
                 catch (Exception)
                 {

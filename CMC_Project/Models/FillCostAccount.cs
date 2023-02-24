@@ -115,20 +115,15 @@ namespace SetUnitPriceByExcel
             var sheet = workbook.GetSheetAt(0);
 
             //적용비율 1, 2 적용금액 원가계산서 반영
-            ExcelHandling.GetCell(sheet, 7, 9).SetCellValue(Data.Bidding["간접노무비1"]);
+            ExcelHandling.GetCell(sheet, 7, 9).SetCellValue(11.3);
             ExcelHandling.GetCell(sheet, 10, 9).SetCellValue(Data.Bidding["산재보험료1"]);
             ExcelHandling.GetCell(sheet, 11, 9).SetCellValue(Data.Bidding["고용보험료1"]);
-            ExcelHandling.GetCell(sheet, 23, 9).SetCellValue(Data.Bidding["기타경비1"]);
-            ExcelHandling.GetCell(sheet, 7, 10).SetCellValue(Data.Bidding["간접노무비2"]);
             ExcelHandling.GetCell(sheet, 10, 10).SetCellValue(Data.Bidding["산재보험료2"]);
             ExcelHandling.GetCell(sheet, 11, 10).SetCellValue(Data.Bidding["고용보험료2"]);
-            ExcelHandling.GetCell(sheet, 23, 10).SetCellValue(Data.Bidding["기타경비2"]);
 
             //적용비율 1, 2 적용 금액 중, 큰 금액 세팅
-            ExcelHandling.GetCell(sheet, 7, 11).SetCellValue(Data.Bidding["간접노무비max"]);
             ExcelHandling.GetCell(sheet, 10, 11).SetCellValue(Data.Bidding["산재보험료max"]);
             ExcelHandling.GetCell(sheet, 11, 11).SetCellValue(Data.Bidding["고용보험료max"]);
-            ExcelHandling.GetCell(sheet, 23, 11).SetCellValue(Data.Bidding["기타경비max"]);
 
             //금액 세팅
             ExcelHandling.GetCell(sheet, 2, 19).SetCellValue(Data.Bidding["순공사원가"]);      //1. 순공사원가
@@ -381,9 +376,9 @@ namespace SetUnitPriceByExcel
 
         public static void Adjustment() //계산된 도급비계와 입찰금액의 차이 값을 보정
         {
-            decimal differency = (Data.Bidding["도급비계"] - Data.ResultPrice) / 1.1m;   //차이 값 계산 
-            decimal profitDiffer = Data.Bidding["이윤"] - (0.9m * Convert.ToDecimal(Data.profitPercent / 100) * Data.ResultPrice);    //이윤 기준율 대비 90% 수준의 차이 값
-            decimal managementDiffer = Data.Bidding["일반관리비"] - (0.9m * Convert.ToDecimal(Data.managementPercent / 100) * Data.ResultPrice); //일반관리비 기준율 대비 90% 수준의 차이 값
+            decimal differency = Math.Floor((Data.Bidding["도급비계"] - Data.ResultPrice) / 1.1m);   //차이 값 계산 
+            decimal profitDiffer = Math.Floor(Data.Bidding["이윤"] - (0.9m * Convert.ToDecimal(Data.profitPercent / 100) * Data.ResultPrice));    //이윤 기준율 대비 90% 수준의 차이 값
+            decimal managementDiffer = Math.Floor(Data.Bidding["일반관리비"] - (0.9m * Convert.ToDecimal(Data.managementPercent / 100) * Data.ResultPrice)); //일반관리비 기준율 대비 90% 수준의 차이 값
 
             //이윤, 일반 관리비, 기타 경비 순으로 차이 값을 보정한다.
             if (profitDiffer > differency)  //현재 차이 값이 이윤 기준율 대비 90% 수준 차이 값 내에서 보정이 안된다면
@@ -410,18 +405,11 @@ namespace SetUnitPriceByExcel
 
             if (differency != 0) //아직 차이 값이 남아 있다면
             {
-                Data.Bidding["기타경비"] = ToLong(Data.Bidding["기타경비"] - differency);   //남은 차이 값을 모두 기타 경비에 보정한다.
+                Data.Bidding["기타경비"] = Convert.ToInt64(Math.Ceiling(Data.Bidding["기타경비"] - differency));   //남은 차이 값을 모두 기타 경비에 보정한다.
             }
 
             CalculateBiddingCosts();    //보정된 값으로 다시 금액 계산 및 저장
-
-            differency = (Data.Bidding["도급비계"] - Data.ResultPrice) / 1.1m;   //차이 값 다시 계산 
-
-            if (differency >= -1 && differency < 0) //차이 값이 1원 차이면 부가가치세에 보정
-            {
-                Data.Bidding["부가가치세"] += 1;
-                Data.Bidding["도급비계"] = Data.Bidding["소계"] + Data.Bidding["부가가치세"];
-            }
+           
         }
 
         //decimal 금액 원 단위 절사

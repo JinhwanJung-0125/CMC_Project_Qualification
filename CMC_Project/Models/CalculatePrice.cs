@@ -93,7 +93,7 @@ namespace SetUnitPriceByExcel
 
             decimal DirectLabor = TotalLabor / (1 + 0.113m);    //구한 노무비 기준의 직접 노무비를 계산한다.
 
-            Data.Rate = (DirectLabor - Data.FixedPriceDirectLabor + Data.StandardLabor) / (Data.RealPriceDirectLabor + Data.StandardLabor); //직접 노무비 기준의 네고율을 구한다.
+            Data.Rate = (DirectLabor - Data.FixedPriceDirectLabor + Data.StandardLabor + Data.ExcludingLabor) / (Data.RealPriceDirectLabor + Data.StandardLabor + Data.ExcludingLabor); //직접 노무비 기준의 네고율을 구한다.
 
             Data.Bidding["기타경비"] = FillCostAccount.ToLong(TotalExpence);    //계산된 기타 경비를 Data에 저장한다.
             Data.Bidding["일반관리비"] = FillCostAccount.ToLong(TotalManagement);    //계산된 일반 관리비를 Data에 저장한다.
